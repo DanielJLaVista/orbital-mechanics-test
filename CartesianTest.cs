@@ -44,5 +44,59 @@ namespace orbital_mechanics_test {
 			Assert.AreEqual(cartesian.Y(), yVal);
 			Assert.AreEqual(cartesian.Z(), zVal);
 		}
+
+		[Test]
+		public void equals_withNull_returnsFalse() {
+			Cartesian cartesian = new Cartesian(1.0, 2.0, 3.0);
+			Cartesian nullCartesian = null;
+			Boolean expected = false;
+
+			Boolean actual = cartesian.Equals(nullCartesian);
+
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void equals_withOtherClass_returnsFalse() {
+			Cartesian cartesian = new Cartesian(1.0, 2.0, 3.0);
+			String aString = "";
+			Boolean expected = false;
+
+			Boolean actual = cartesian.Equals(aString);
+
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void equals_withInequalCartesian_returnsFalse() {
+			Cartesian firstCartesian = new Cartesian(1.0, 2.0, 3.0);
+			Cartesian secondCartesian = new Cartesian(2.0, 4.0, 6.0);
+			Boolean expected = false;
+
+			Boolean actual = firstCartesian.Equals(secondCartesian);
+
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void equals_withEqualCartesian_returnsTrue() {
+			Cartesian firstCartesian = new Cartesian(1.0, 2.0, 3.0);
+			Cartesian secondCartesian = new Cartesian(1.0, 2.0, 3.0);
+			Boolean expected = true;
+
+			Boolean actual = firstCartesian.Equals(secondCartesian);
+
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void equals_withSelf_returnsTrue() {
+			Cartesian cartesian = new Cartesian(1.0, 2.0, 3.0);
+			Boolean expected = true;
+
+			Boolean actual = cartesian.Equals(cartesian);
+
+			Assert.AreEqual(expected, actual);
+		}
 	}
 }

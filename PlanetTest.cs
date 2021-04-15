@@ -214,7 +214,7 @@ namespace orbital_mechanics_test {
 			planet.SetMass(100.0);
 
 			planet.UpdateVelocity(timeStep);
-			Console.WriteLine(planet.Velocity().print());
+
 			Assert.AreEqual(planet.Velocity(), expectedVelocity);
 		}
 	}
