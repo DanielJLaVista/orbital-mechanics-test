@@ -117,5 +117,197 @@ namespace orbital_mechanics_test {
 
             Assert.AreEqual(firstKinematics.GetHashCode(), secondKinematics.GetHashCode());
         }
+        [Test]
+        public void updatePosition_withNoVelocityAndNoTimeStep_positionIsUnmodified() {
+            Kinematics kinematics = new Kinematics();
+            double timeStep = 0.0;
+            Cartesian expectedPosition = new Cartesian();
+
+            kinematics.UpdatePosition(timeStep);
+
+            Assert.AreEqual(kinematics.Position(), expectedPosition);
+        }
+
+        [Test]
+        public void updatePosition_withNoVelocityAndTimeStep_positionIsUnmodified() {
+            Kinematics kinematics = new Kinematics();
+            double timeStep = 3.3;
+
+            kinematics.UpdatePosition(timeStep);
+
+            Assert.AreEqual(kinematics.Position(), zeroCartesian);
+        }
+
+        [Test]
+        public void updatePosition_withVelocityAndNoTimeStep_positionIsUnmodified() {
+            Kinematics kinematics = new Kinematics();
+            double timeStep = 0.0;
+            kinematics.SetVelocity(testVelocity);
+
+            kinematics.UpdatePosition(timeStep);
+
+            Assert.AreEqual(kinematics.Position(), zeroCartesian);
+        }
+
+        [Test]
+        public void updatePosition_withVelocityAndTimeStep_positionIsModified() {
+            Cartesian expectedPosition = new Cartesian(4.95, 7.5, -14.7);
+
+            Kinematics kinematics = new Kinematics();
+            double timeStep = 1.5;
+            kinematics.SetVelocity(new Cartesian(3.3, 5.0, -9.8));
+
+            kinematics.UpdatePosition(timeStep);
+
+            Assert.AreEqual(kinematics.Position(), expectedPosition);
+        }
+
+        [Test]
+        public void updatePosition_withInitialPositionVelocityAndTimeStep_positionIsModified() {
+            Cartesian expectedPosition = new Cartesian(-10.75, 13.87, -13.951);
+
+            Kinematics kinematics = new Kinematics();
+            double timeStep = 1.5;
+            kinematics.SetPosition(new Cartesian(-15.7, 6.37, 0.749));
+            kinematics.SetVelocity(new Cartesian(3.3, 5.0, -9.8));
+
+            kinematics.UpdatePosition(timeStep);
+
+            Assert.AreEqual(kinematics.Position(), expectedPosition);
+        }
+
+        [Test]
+        public void updatePosition_withNegativeTimeStepAndNoVelocity_positionIsUnmodified() {
+            Cartesian expectedPosition = new Cartesian();
+
+            Kinematics kinematics = new Kinematics();
+            double timeStep = -3.3;
+
+            kinematics.UpdatePosition(timeStep);
+
+            Assert.AreEqual(kinematics.Position(), expectedPosition);
+        }
+
+        [Test]
+        public void updatePosition_withVelocityAndNegativeTimeStep_positionIsModified() {
+            Cartesian expectedPosition = new Cartesian(-4.95, -7.5, 14.7);
+
+            Kinematics kinematics = new Kinematics();
+            double timeStep = -1.5;
+            kinematics.SetVelocity(new Cartesian(3.3, 5.0, -9.8));
+
+            kinematics.UpdatePosition(timeStep);
+
+            Assert.AreEqual(kinematics.Position(), expectedPosition);
+        }
+
+        [Test]
+        public void updatePosition_withInitialPositionVelocityAndNegativeTimeStep_positionIsModified() {
+            Cartesian expectedPosition = new Cartesian(-20.65, -1.13, 15.449);
+
+            Kinematics kinematics = new Kinematics();
+            double timeStep = -1.5;
+            kinematics.SetPosition(new Cartesian(-15.7, 6.37, 0.749));
+            kinematics.SetVelocity(new Cartesian(3.3, 5.0, -9.8));
+
+            kinematics.UpdatePosition(timeStep);
+
+            Assert.AreEqual(kinematics.Position(), expectedPosition);
+        }
+
+        [Test]
+        public void updateVelocity_withNoAccelerationAndNoTimeStep_velocityIsUnmodified() {
+            Kinematics kinematics = new Kinematics();
+            double timeStep = 0.0;
+
+            kinematics.UpdateVelocity(timeStep);
+
+            Assert.AreEqual(kinematics.Velocity(), zeroCartesian);
+        }
+
+        [Test]
+        public void updateVelocity_withNoAccelerationAndTimeStep_velocityIsUnmodified() {
+            Kinematics kinematics = new Kinematics();
+            double timeStep = 3.3;
+
+            kinematics.UpdateVelocity(timeStep);
+
+            Assert.AreEqual(kinematics.Velocity(), zeroCartesian);
+        }
+        [Test]
+        public void updateVelocity_withForceAndNoTimeStep_velocityIsUnmodified() {
+            Cartesian expectedVelocity = new Cartesian();
+
+            Kinematics kinematics = new Kinematics();
+            double timeStep = 0.0;
+            kinematics.SetAcceleration(new Cartesian(0.033, 0.05, -0.098));
+
+            kinematics.UpdateVelocity(timeStep);
+
+            Assert.AreEqual(kinematics.Velocity(), expectedVelocity);
+        }
+
+        [Test]
+        public void updateVelocity_withAccelerationAndTimeStep_velocityIsModified() {
+            Cartesian expectedVelocity = new Cartesian(0.0495, 0.075, -0.147);
+
+            Kinematics kinematics = new Kinematics();
+            double timeStep = 1.5;
+            kinematics.SetAcceleration(new Cartesian(0.033, 0.05, -0.098));
+
+            kinematics.UpdateVelocity(timeStep);
+
+            Assert.AreEqual(kinematics.Velocity(), expectedVelocity);
+        }
+
+        [Test]
+        public void updateVelocity_withInitialVelocityAccelerationAndTimeStep_velocityIsModified() {
+            Cartesian expectedVelocity = new Cartesian(-15.6505, 6.445, 0.602);
+
+            Kinematics kinematics = new Kinematics();
+            double timeStep = 1.5;
+            kinematics.SetVelocity(new Cartesian(-15.7, 6.37, 0.749));
+            kinematics.SetAcceleration(new Cartesian(0.033, 0.05, -0.098));
+
+            kinematics.UpdateVelocity(timeStep);
+
+            Assert.AreEqual(kinematics.Velocity(), expectedVelocity);
+        }
+
+        [Test]
+        public void updateVelocity_withNegativeTimeStepAndNoAcceleration_velocityIsUnmodified() {
+            Kinematics kinematics = new Kinematics();
+            double timeStep = -3.3;
+
+            kinematics.UpdateVelocity(timeStep);
+
+            Assert.AreEqual(kinematics.Velocity(), zeroCartesian);
+        }
+
+        [Test]
+        public void updateVelocity_withAccelerationAndNegativeTimeStep_velocityIsModified() {
+            Cartesian expectedVelocity = new Cartesian(-0.0495, -0.075, 0.147);
+
+            Kinematics kinematics = new Kinematics();
+            double timeStep = -1.5;
+            kinematics.SetAcceleration(new Cartesian(0.033, 0.05, -0.098));
+
+            kinematics.UpdateVelocity(timeStep);
+
+            Assert.AreEqual(kinematics.Velocity(), expectedVelocity);
+        }
+        [Test]
+        public void updateVelocity_withInitialVelocityAccelerationAndNegativeTimeStep_velocityIsModified() {
+            Cartesian expectedVelocity = new Cartesian(-15.7495, 6.295, 0.896);
+
+            Kinematics kinematics = new Kinematics();
+            double timeStep = -1.5;
+            kinematics.SetVelocity(new Cartesian(-15.7, 6.37, 0.749));
+            kinematics.SetAcceleration(new Cartesian(0.033, 0.05, -0.098));
+
+            kinematics.UpdateVelocity(timeStep);
+
+            Assert.AreEqual(kinematics.Velocity(), expectedVelocity);
+        }
     }
 }
