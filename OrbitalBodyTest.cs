@@ -22,7 +22,7 @@ namespace orbital_mechanics_test {
 
             Assert.AreEqual(orbitalBody.Kinematics(), zeroKinematics);
             Assert.AreEqual(orbitalBody.Force(), zeroCartesian);
-            Assert.AreEqual(orbitalBody.Mass(), 0.0);
+            Assert.AreEqual(orbitalBody.Mass(), double.Epsilon);
         }
 
         [Test]
@@ -121,6 +121,71 @@ namespace orbital_mechanics_test {
             OrbitalBody secondOrbitalBody = new OrbitalBody(testKinematics, testForce, testMass);
 
             Assert.AreEqual(firstOrbitalBody.GetHashCode(), secondOrbitalBody.GetHashCode());
+        }
+
+        [Test]
+        public void updateAcceleration_withNoForceAndInitialMass_accelerationIsZero() {
+            OrbitalBody orbitalBody = new OrbitalBody();
+
+            orbitalBody.UpdateAcceleration();
+
+            Assert.AreEqual(orbitalBody.Kinematics().Acceleration(), zeroCartesian);
+        }
+
+        [Test]
+        public void updateAcceleration_withNearZeroForceAndInitialMass_accelerationIsNearMaxDouble() {
+            bool expectedIsInfinite = true;
+            Cartesian force = new Cartesian(1.0, 10.0, 0.1);
+            OrbitalBody orbitalBody = new OrbitalBody();
+            orbitalBody.SetForce(force);
+
+            orbitalBody.UpdateAcceleration();
+            bool resultIsInfinite = double.IsInfinity(orbitalBody.Kinematics().Acceleration().X());
+            Assert.AreEqual(resultIsInfinite, expectedIsInfinite);
+        }
+
+        [Test]
+        public void updateAcceleration_withNearZeroNegativeForceAndInitialMass_accelerationIsNearMinDouble() {
+            bool expectedIsInfinite = true;
+            Cartesian force = new Cartesian(-1.0, -10.0, -0.1);
+            OrbitalBody orbitalBody = new OrbitalBody();
+            orbitalBody.SetForce(force);
+
+            orbitalBody.UpdateAcceleration();
+            bool resultIsInfinite = double.IsNegativeInfinity(orbitalBody.Kinematics().Acceleration().X());
+            Assert.AreEqual(resultIsInfinite, expectedIsInfinite);
+        }
+
+#warning unit test UpdateAcceleration around min/max double boundary
+
+        [Test]
+        public void updateAcceleration_withForceAndMass_accelerationIsSet() {
+            Cartesian force = new Cartesian(55, 98.3, -2.4);
+            Cartesian expectedAcceleration = new Cartesian(0.55, 0.983, -0.024);
+            OrbitalBody orbitalBody = new OrbitalBody();
+            orbitalBody.SetForce(force);
+            orbitalBody.SetMass(100.0);
+
+            orbitalBody.UpdateAcceleration();
+
+            Assert.AreEqual(orbitalBody.Kinematics().Acceleration(), expectedAcceleration);
+        }
+
+        [Test]
+        public void DistanceFractionBetweenBodiesOnAxis_withNullFunction_throwsNullReferenceException() {
+            OrbitalBody orbitalBody = new OrbitalBody();
+            Assert.Throws<NullReferenceException>(() => { orbitalBody.DistanceFractionBetweenBodiesOnAxis(null, null, 0.0); });
+        }
+
+        [Test]
+        public void DistanceFractionBetweenBodiesOnAxis_withLargerFirstPos_returnsNegativeFraction() {
+            OrbitalBody orbitalBody = new OrbitalBody();
+            Cartesian otherPosition = new Cartesian(10.0, 0.0, 0.0);
+            double totalDistance = 50.0;
+            double expectedFraction = 0.2;
+            double actualFraction = orbitalBody.DistanceFractionBetweenBodiesOnAxis(otherPosition.X, orbitalBody.Kinematics().Position().X, totalDistance);
+
+            Assert.IsTrue(DoubleComparison.RobustDoubleEquals(actualFraction, expectedFraction));
         }
     }
 }
